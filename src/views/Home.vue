@@ -27,7 +27,7 @@
       </div>
 
       <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-        <ion-fab-button color="primary">
+        <ion-fab-button color="primary" @click="openTaskModal">
           <ion-icon name="add"></ion-icon>
         </ion-fab-button>
       </ion-fab>
@@ -45,10 +45,12 @@ import {
   IonFab,
   IonFabButton,
   IonIcon,
+  modalController 
 } from "@ionic/vue";
 import { addIcons } from "ionicons";
 import { add } from "ionicons/icons";
 import { defineComponent } from "vue";
+import TaskModal from '../components/TaskModal'
 
 addIcons({
   "add": add.md
@@ -71,6 +73,19 @@ export default defineComponent({
       add
     };
   },
+  methods: {
+    async openTaskModal() {
+      const modal = await modalController
+        .create({
+          component: TaskModal,
+          cssClass: 'slide-in-up',
+          componentProps: {
+            title: 'New Title'
+          }
+        })
+      return modal.present();
+    },
+  }
 });
 </script>
 
