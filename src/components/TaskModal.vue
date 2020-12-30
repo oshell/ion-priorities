@@ -1,11 +1,9 @@
 <template>
-  <ion-header>
-    <ion-toolbar>
-      <ion-title>{{ title }}</ion-title>
-    </ion-toolbar>
-  </ion-header>
   <ion-content class="ion-padding">
-    {{ content }}
+    <ion-item>
+      <ion-label position="stacked">Task</ion-label>
+      <ion-input v-model="title"></ion-input>
+    </ion-item>
 
     <ion-fab vertical="bottom" horizontal="end" slot="fixed">
       <ion-fab-button color="primary" @click="close">
@@ -18,16 +16,17 @@
 <script>
 import {
   IonContent,
-  IonHeader,
-  IonTitle,
-  IonToolbar,
   IonFab,
   IonFabButton,
   IonIcon,
-  modalController
+  IonItem,
+  IonLabel,
+  IonInput,
+  modalController,
 } from "@ionic/vue";
 import { addIcons } from "ionicons";
 import { defineComponent } from "vue";
+import { mapMutations } from 'vuex';
 import { checkmark } from "ionicons/icons";
 
 addIcons({
@@ -36,12 +35,10 @@ addIcons({
 
 export default defineComponent({
   name: "Modal",
-  props: {
-    title: { type: String, default: "Super Modal" }
-  },
   data() {
     return {
       content: "Content",
+      title: ''
     };
   },
   setup() {
@@ -51,17 +48,23 @@ export default defineComponent({
   },
   components: {
     IonContent,
-    IonHeader,
-    IonTitle,
-    IonToolbar,
     IonFab,
     IonFabButton,
-    IonIcon
+    IonIcon,
+    IonItem,
+    IonLabel,
+    IonInput,
   },
   methods: {
-    close: async function() {
-        const modal = await modalController.getTop();
-        modal.dismiss();
+    ...mapMutations([
+      'addTask'
+    ]),
+    close: async function () {
+      this.addTask({
+        title: this.title
+      })
+      const modal = await modalController.getTop();
+      modal.dismiss();
     },
   },
 });

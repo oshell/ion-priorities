@@ -13,18 +13,11 @@
         </ion-toolbar>
       </ion-header>
 
-      <div id="container">
-        <strong>Ready to create an app?</strong>
-        <p>
-          Start with Ionic
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            href="https://ionicframework.com/docs/components"
-            >UI Components</a
-          >
-        </p>
-      </div>
+      <ion-list>
+        <ion-item v-for="task in tasks" :key="task.title">
+          <ion-label>{{task.title}}</ion-label>
+        </ion-item>
+      </ion-list>
 
       <ion-fab vertical="bottom" horizontal="end" slot="fixed">
         <ion-fab-button color="primary" @click="openTaskModal">
@@ -45,15 +38,19 @@ import {
   IonFab,
   IonFabButton,
   IonIcon,
-  modalController 
+  IonItem,
+  IonList,
+  IonLabel,
+  modalController,
 } from "@ionic/vue";
 import { addIcons } from "ionicons";
 import { add } from "ionicons/icons";
 import { defineComponent } from "vue";
-import TaskModal from '../components/TaskModal'
+import { mapState } from "vuex";
+import TaskModal from "../components/TaskModal";
 
 addIcons({
-  "add": add.md
+  add: add.md,
 });
 
 export default defineComponent({
@@ -67,25 +64,27 @@ export default defineComponent({
     IonFab,
     IonFabButton,
     IonIcon,
+    IonItem,
+    IonList,
+    IonLabel,
   },
   setup() {
     return {
-      add
+      add,
     };
+  },
+  computed: {
+    ...mapState(["tasks"]),
   },
   methods: {
     async openTaskModal() {
-      const modal = await modalController
-        .create({
-          component: TaskModal,
-          cssClass: 'slide-in-up',
-          componentProps: {
-            title: 'New Title'
-          }
-        })
+      const modal = await modalController.create({
+        component: TaskModal,
+        cssClass: "slide-in-up"
+      });
       return modal.present();
     },
-  }
+  },
 });
 </script>
 
