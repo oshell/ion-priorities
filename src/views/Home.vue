@@ -14,9 +14,29 @@
       </ion-header>
 
       <ion-list>
-        <ion-item v-for="task in tasks" :key="task.title">
-          <ion-label>{{task.title}}</ion-label>
-        </ion-item>
+            <!-- Sliding item with expandable options on both sides -->
+    <ion-item-sliding v-for="task in openTasks" :key="task.title" @ionDrag="handleDrag" :data-id="task.id">
+      <ion-item-options side="start">
+        <ion-item-option color="success" expandable @click="handleDone(task.id)">
+          Done
+        </ion-item-option>
+      </ion-item-options>
+
+      <ion-item>
+        <ion-label>{{task.title}}</ion-label>
+      </ion-item>
+
+      <ion-item-options side="end">
+        <ion-item-option color="danger" expandable>
+          Delete
+        </ion-item-option>
+        <ion-item-option color="tertiary" expandable>
+          Edit
+        </ion-item-option>
+      </ion-item-options>
+    </ion-item-sliding>
+
+
       </ion-list>
 
       <ion-fab vertical="bottom" horizontal="end" slot="fixed">
@@ -46,7 +66,7 @@ import {
 import { addIcons } from "ionicons";
 import { add } from "ionicons/icons";
 import { defineComponent } from "vue";
-import { mapState } from "vuex";
+import { mapGetters, mapMutations } from "vuex";
 import TaskModal from "../components/TaskModal";
 
 addIcons({
@@ -74,9 +94,10 @@ export default defineComponent({
     };
   },
   computed: {
-    ...mapState(["tasks"]),
+    ...mapGetters(["openTasks"]),
   },
   methods: {
+    ...mapMutations(["setDone"]),
     async openTaskModal() {
       const modal = await modalController.create({
         component: TaskModal,
@@ -84,6 +105,16 @@ export default defineComponent({
       });
       return modal.present();
     },
+    handleDone(id) {
+      this.setDone(id);
+    },
+    handleDrag(e) {
+      const doneSlided = e.detail.ratio < -3.6;
+      if (doneSlided) {
+        const id = parseInt(e.target.dataset.id);
+        this.setDone(id);
+      }
+    }
   },
 });
 </script>
